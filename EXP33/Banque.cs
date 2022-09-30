@@ -10,8 +10,8 @@ namespace EXP33
     {
         public string Nom { get; set; }
 
-        private Dictionary<string, Courant> _banques = new Dictionary<string, Courant>();
-        public Dictionary<string, Courant> Banques
+        private Dictionary<string, Compte> _banques = new Dictionary<string, Compte>();
+        public Dictionary<string, Compte> Banques
         {
             get
             {
@@ -20,11 +20,11 @@ namespace EXP33
 
         }
 
-        public Courant this[string key]
+        public Compte this[string key]
         {
             get
             {
-                Courant c;
+                Compte? c;
                 Banques.TryGetValue(key, out c);
                 return c;
             }
@@ -34,22 +34,44 @@ namespace EXP33
             }
         }
 
-        public void Ajouter(Courant compte)
+        public void Ajouter(Compte compte)
         {
-            if(compte.Numero == null)
+            if (compte.Numero == null)
             {
-                throw new ArgumentNullException("ce compte n'existe pas");
+                throw new ArgumentNullException("Ce compte n'existe pas");
             }
-            Banques.Add(compte.Numero,compte);
+            Banques.Add(compte.Numero, compte);
         }
 
         public void Supprimer(string numero)
-        {        
+        {
             bool testDel = Banques.Remove(numero);
             if (!testDel)
             {
-                throw new KeyNotFoundException(" clée non trouvée");
+                throw new KeyNotFoundException("Clée non trouvée");
             }
+        }
+
+        public double AvoirDesComptes(Personne p)
+        {
+            double soldeTotal = 0.0;
+
+            // Exemple sans LinQ
+            // foreach (KeyValuePair<string,Courant> kvp in Banques)
+            //{
+            //    if(kvp.Value.Titulaire == p)
+            //    {
+            //        soldeTotal =  kvp.Value.Solde + soldeTotal;
+            //    }
+            //}
+
+            // Exemple avec LinQ 
+            foreach (Compte c in Banques.Values.Where(c => c.Titulaire == p))
+            {
+                soldeTotal = c + soldeTotal;
+            }
+
+            return soldeTotal;  
         }
     }
 }

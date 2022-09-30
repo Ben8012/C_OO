@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EXP33
 {
-    internal class Personne
+    public class Personne
     {
 
         private string _nom;

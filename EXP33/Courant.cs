@@ -6,75 +6,62 @@ using System.Threading.Tasks;
 
 namespace EXP33
 {
-    internal class Courant
+    internal class Courant : Compte
     {
-        private string? _numero;
-        private double _solde;
-        private double _ligneDeCredit;
-
-        public string? Numero 
-        { 
-            get { return _numero; } 
-            set { _numero = value; } 
+        public Courant( string? numero, double solde, double ligneDeCredit, Personne? titulaire) : base(numero, solde, titulaire)
+        {
+            LigneDeCredit = ligneDeCredit;
         }
-        public double Solde 
-        { 
-            get { return _solde; } 
-            private set { _solde = value; }
-           
-        }
-
-        public double LigneDeCredit 
-        { 
-            get { return _ligneDeCredit; }
-            set {
-                    if (value > 0)
-                    {
-                        _ligneDeCredit = value;
-                    }
-                } 
-        }
-        internal Personne? Titulaire;
+        public Courant(){ }
 
         
 
-        public void Retrait(double montant)
+        private double _ligneDeCredit;
+        public double LigneDeCredit
+        {
+            get { return _ligneDeCredit; }
+            set
+            {
+                if (value > 0)
+                {
+                    _ligneDeCredit = value;
+                }
+                else
+                {
+                    Console.WriteLine("ligne de crédit ne peut etre inferieur a 0");
+                }
+            }
+        }
+
+
+        public override void Retrait(double montant)
         {
             if (montant <= 0)
             {
                 Console.WriteLine("montant inferieur a 0");
                 return;
             }
-            //if(montant > Solde )
-            //{
-            //    Console.WriteLine(" solde insufisant ! ");
-            //    return;
-            //}
-            if (Solde - montant <  -LigneDeCredit)
+
+            if (Solde - montant < -LigneDeCredit)
             {
                 Console.WriteLine(" ligne de crédit inssufissante ! ");
                 return;
             }
-            Solde -= montant;    
+            base.Retrait(montant);  
+            
         }
-        public void Depot(double montant)
+
+
+        protected override double CalculInteret()
         {
-            if(montant <= 0)
+            if (Solde > 0)
             {
-                Console.WriteLine(" pas de valeur negative ! ");
-                return;
-            }  
-            Solde += montant; 
+                return Solde * 0.03;
+            }
+            else
+            {
+                return Solde * 0.0975;
+            }
         }
-
-        public Courant(string? numero,double solde, double ligneDeCredit, Personne? titulaire)
-        {
-            this.Numero = numero;
-            this.Solde = solde;
-            this.LigneDeCredit = ligneDeCredit;
-            this.Titulaire = titulaire;
-        }
-
-        public Courant(){}
     }
 }
